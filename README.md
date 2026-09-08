@@ -10,6 +10,7 @@ translation layer, and keeping them there.
 | **This file** | You are wiring it up for the first time |
 | [`tailwind-v4-theming-with-paper.md`](./tailwind-v4-theming-with-paper.md) | You are designing the token model — naming, theming, responsive sizing |
 | [`tailwind-v4-coverage-and-sync.md`](./tailwind-v4-coverage-and-sync.md) | Something Paper cannot express, or the design and the code have drifted |
+| [`skills/paper-tailwind-tokens/`](./skills/paper-tailwind-tokens/SKILL.md) | An agent is doing the work — runtime contract, not prose |
 
 ---
 

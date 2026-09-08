@@ -1,0 +1,58 @@
+/* Template: two-block token stylesheet.
+   Block 1 is generated. Block 2 is written by hand. Never merge them. */
+
+@import "tailwindcss";
+
+/* ── Palette — raw values, swapped per theme ───────────────────── */
+:root {
+  --ground: #F5E9DB;
+  --ink:    #24130A;
+  --accent: #B45844;
+}
+
+[data-theme="dark"] {
+  --ground: #19191A;
+  --ink:    #F5E9DB;
+  --accent: #D59F93;
+}
+
+/* ── Synced from Paper — get_tokens({ format: "tailwind" }) ────────
+   Regenerating replaces THIS BLOCK ONLY.
+   contentHash.tokens: <paste here>                                  */
+@theme inline {
+  --color-surface: var(--ground);
+  --color-content: var(--ink);
+  --color-accent:  var(--accent);
+
+  --font-display: "Caprasimo", ui-serif, Georgia, serif;
+  --font-body:    "Syne", ui-sans-serif, system-ui, sans-serif;
+
+  --text-lg: 28px;
+  --text-lg--line-height: 1.2;
+
+  --breakpoint-*: initial;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1200px;
+
+  --container-prose:  680px;
+  --container-canvas: 1200px;
+
+  --spacing: 4px;
+}
+
+/* ── Codebase-owned — no Paper equivalent, maintained here ───────── */
+@theme {
+  --shadow-raised:  0 1px 2px rgb(36 19 10 / 0.06),
+                    0 4px 12px rgb(36 19 10 / 0.08);
+  --shadow-overlay: 0 12px 32px rgb(36 19 10 / 0.16);
+
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+
+  --animate-fade-up: fade-up 0.4s var(--ease-entrance);
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
