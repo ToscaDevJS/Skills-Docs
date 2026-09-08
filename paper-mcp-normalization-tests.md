@@ -227,10 +227,21 @@ Claim: listing `--spacing-1 … --spacing-8` coexists with v4's derived scale.
 
 The derived scale is fully alive; enumerating tokens does not disable it.
 
-The stronger consequence: the file's enumerated values (4, 8, 12, 16, 24, 32) are
-exactly 1, 2, 3, 4, 6, 8 × 4px — precisely what the derived scale already
-produces. **Those six tokens add nothing and can be deleted without changing a
-single rendered pixel.**
+The file's enumerated values (4, 8, 12, 16, 24, 32) are exactly 1, 2, 3, 4, 6,
+8 × 4px — precisely what the derived scale already produces, so **in the exported
+`@theme` block the six declarations are redundant** and can be dropped in favour
+of a single `--spacing` base.
+
+> **They are not redundant inside Paper.** `find_nodes` reports **134 nodes**
+> bound to `var(--spacing-N)` for `gap`, `padding`, `marginTop` and `width` —
+> including the six specimen rectangles that illustrate the scale. Paper has no
+> derived scale; a node references the token or it references nothing. Deleting
+> the tokens in Paper breaks 134 nodes while deleting them from the export
+> changes no rendered pixel.
+>
+> This is the general shape of the trap: a token can be dead in one half of the
+> pipeline and load-bearing in the other. Redundancy is always a claim about a
+> specific consumer. Run `find_nodes` before deleting any token.
 
 ## T3 — Custom breakpoint keeps the default scale · CONFIRMED, scale deformed
 
