@@ -113,3 +113,76 @@ and unitless as interchangeable. The distinction only exists in exported code.
 | `letterSpacing` | explicit `em` string | numbers become px (F-04) |
 | `spacing`, `radius` | `px` | consistency with F-03 |
 | `color` | any CSS syntax | normalized but equivalent |
+
+---
+
+# Part 2 — Round-trip integration test
+
+Token tests above check storage in isolation. This one checks the thing that
+actually matters: **does a Paper design reproduce in a browser through the
+Tailwind v4 path?**
+
+**Subject:** `Section: Final CTA` (1200×502) from Radiant Thread Studio.
+**Path:** `get_jsx({ format: "tailwind" })` + `get_tokens({ format: "tailwind" })`,
+both pasted verbatim — no hand edits — into a page loading
+`@tailwindcss/browser@4`, rendered in Chrome at 1200px, measured with
+`getComputedStyle`.
+
+**Prediction stated before running:** faithful. The section has no nested text
+(so F-01 cannot bite) and no `rem` tokens (so F-03 cannot bite). Any failure
+should come from font loading.
+
+## Result — faithful
+
+| Measure | Paper | Browser | Δ |
+|---------|-------|---------|---|
+| Section height | 502px | 501.19px | 0.81px |
+| Headline block | 126px | 126.00px | **0** |
+| Body block | 44px | 43.19px | 0.81px |
+| Button | 291×52 | 290.38×52 | 0.63px |
+| Headline size / leading | `text-5xl/none` | 70px / 63px | exact (70 × 0.9) |
+| Body size / leading | `text-md/normal` | 18px / 21.6px | exact (18 × 1.2) |
+| Eyebrow tracking | `tracking-widest` | 2.769px (13 × 0.213) | exact |
+| Button radius | `rounded-button` | 15px | exact |
+| 4 color tokens | — | exact `rgb()` match | **0** |
+
+Sub-pixel differences only. The prediction held; both fonts loaded, so the one
+predicted failure mode did not occur either.
+
+## What the export revealed
+
+**Paper emits paired modifiers.** The headline exports as `text-5xl/none` —
+font size and line height in a single utility. Coverage §4 said the pairing had
+to be reassembled by hand; that is true only of the **theme** layer
+(`--text-lg--line-height` still cannot be stored). Per element, `get_jsx` already
+emits the pairing.
+
+**Paper mixes three leading mechanisms in one component:** `/none` (theme token),
+`leading-4` (spacing scale), `leading-[20px]` (arbitrary). All three resolve
+correctly, but the exported code has no single convention.
+
+**Paper emits palette tokens directly:** `bg-mauve`, `text-ground`, `bg-sage`.
+This is the file's own naming, not a tool defect — but it demonstrates the
+two-layer argument empirically. The exported component cannot be themed, because
+it asks for *mauve*, not for a role.
+
+---
+
+## F-01 falsification test
+
+F-01 claimed unitless line-height matters. A round-trip that passes without
+nesting does not test that claim, so it was tested directly: identical markup and
+hierarchy, the only variable being the token's stored form.
+
+| Parent `line-height` | Nested 40px child resolves to |
+|----------------------|-------------------------------|
+| `120%` — what Paper stores | **19.2px** |
+| `1.2` — what Tailwind ships | **48px** |
+
+A 2.5× error. At `120%` the 40px child gets a 19.2px line box and collides with
+the lines above and below it.
+
+**F-01 is confirmed and not theoretical.** It is invisible in flat sections —
+which is most of a landing page, and why the round-trip above passed — and
+breaks the moment a component nests type. The export-time conversion is not
+housekeeping.

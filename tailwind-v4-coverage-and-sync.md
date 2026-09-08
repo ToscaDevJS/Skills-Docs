@@ -183,8 +183,10 @@ Tailwind v4 lets a font-size utility bundle a default line height:
 
 Now `text-lg` sets size, leading and tracking in one class.
 
-Paper has no way to express the pairing — `fontSize`, `lineHeight` and
-`letterSpacing` are three independent types. Reassemble the pairs on the
+Paper cannot store the pairing in the theme — `fontSize`, `lineHeight` and
+`letterSpacing` are three independent token types. Note that `get_jsx` *does*
+emit the pairing per element as `text-5xl/none`; the gap is at the theme layer,
+where a size utility should carry its own defaults. Reassemble the pairs on the
 codebase side after export, in the same block where the export lands. This is
 the single highest-value manual step: it turns three classes into one and stops
 type from drifting apart across components.
