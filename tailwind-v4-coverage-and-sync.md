@@ -158,6 +158,12 @@ Conversion is arithmetic — divide by 100:
 --leading-loose:  180%   →  1.8
 ```
 
+> **Paper cannot store the converted value.** Writing `1.2` to a `lineHeight`
+> token normalizes to `120%` on save — verified: writing `2` stored `200%`. The
+> conversion is a mandatory export-time step in the codebase, in the same class
+> as `clamp()` and the dark-mode palette swap. Record the intended ratio in the
+> token `description` so the export step has a source of truth.
+
 ---
 
 ## 4. Font size cannot carry its own line height
