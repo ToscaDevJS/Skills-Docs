@@ -42,3 +42,13 @@ collides with the lines above and below it; the right card's child resolves to
 
 This is why the `%` → unitless conversion is mandatory at export time even though
 the round-trip page above passes: flat sections never expose it.
+
+## `unverified-claims.html`
+
+Four probes for claims this repository made without evidence (Part 3 of the
+findings doc): `--container-*` double duty, enumerated `--spacing-N` versus the
+derived scale, a redefined breakpoint against the default scale, and
+`font-semibold` on a family that ships only weight 400.
+
+T3 is viewport-dependent — measure at **1300px** and again at **1100px**. Three
+claims held; T4 was refuted.

@@ -188,3 +188,87 @@ the lines above and below it.
 which is most of a landing page, and why the round-trip above passed — and
 breaks the moment a component nests type. The export-time conversion is not
 housekeeping.
+
+---
+
+# Part 3 — Unverified claims
+
+The round-trip in Part 2 exercised `color`, `fontSize`, `fontFamily`,
+`letterSpacing` and `radius` and found them exact, so re-testing those proves
+nothing. This part tests only the claims this repository asserted **without
+evidence** — three written into the guides, one predicted during review.
+
+Runnable page: [`tests/unverified-claims.html`](./tests/unverified-claims.html).
+Theme: the Radiant Thread token subset, verbatim.
+
+## T1 — `--container-*` serves two roles · CONFIRMED
+
+Claim: one `--container-name` token generates both a width utility and a
+container-query variant.
+
+| Probe | Result |
+|-------|--------|
+| `max-w-canvas` computed `max-width` | **1200px** |
+| `@canvas:` inside a 1400px `@container` | **applies** |
+| `@canvas:` inside an 800px `@container` | **does not apply** |
+
+Both roles confirmed, and the variant respects its container, not the viewport.
+
+## T2 — Enumerated `--spacing-N` tokens · CONFIRMED, and they are redundant
+
+Claim: listing `--spacing-1 … --spacing-8` coexists with v4's derived scale.
+
+| Utility | Matching token | Computed |
+|---------|----------------|----------|
+| `p-4` | exists | 16px |
+| `p-5` | **none** | **20px** |
+| `p-13` | **none** | **52px** |
+| `gap-7` | **none** | **28px** |
+
+The derived scale is fully alive; enumerating tokens does not disable it.
+
+The stronger consequence: the file's enumerated values (4, 8, 12, 16, 24, 32) are
+exactly 1, 2, 3, 4, 6, 8 × 4px — precisely what the derived scale already
+produces. **Those six tokens add nothing and can be deleted without changing a
+single rendered pixel.**
+
+## T3 — Custom breakpoint keeps the default scale · CONFIRMED, scale deformed
+
+Claim: defining `--breakpoint-lg` leaves `sm` `md` `xl` `2xl` in place.
+
+| Viewport | sm | md | lg | xl | 2xl |
+|----------|----|----|----|----|-----|
+| 1300px | yes | yes | yes | yes | no |
+| 1100px | yes | yes | no | no | no |
+
+The defaults survive and the redefined `lg` fires exactly at its own 1200px
+boundary.
+
+But note what the redefinition does to the ramp. Default `lg` is 1024px; moved to
+1200px it now sits **80px** below the untouched `xl` at 1280px, while `md` → `lg`
+has become a 432px jump. The scale works but is lopsided — an argument for
+clearing the namespace with `initial` rather than redefining a single rung.
+
+## T4 — `font-semibold` on a single-weight family · REFUTED
+
+Predicted: Caprasimo ships only weight 400, so `font-semibold` on display type
+would produce faux-bold.
+
+**Wrong.** Measured widths of the same string at 50px:
+
+| Element | `font-weight` | Rendered width |
+|---------|---------------|----------------|
+| `font-display` | 400 | 290.78px |
+| `font-display font-semibold` | 600 | **290.78px** |
+| `font-display font-semibold [font-synthesis:none]` | 600 | **290.78px** |
+
+Identical to the hundredth of a pixel, and visually indistinguishable. No
+synthetic bold is applied; the browser resolves to the 400 face and moves on.
+
+That is worse than faux-bold, not better: `--font-weight-semibold` on
+`--font-display` is a **silent no-op**. The computed style still reports `600`, so
+inspecting the element confirms the author's intent while the page renders
+something else. Someone asking for emphasis gets nothing, and no warning.
+
+Call `get_font_family_info` before tokenizing a weight — it lists exactly which
+faces a family ships.

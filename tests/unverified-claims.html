@@ -1,0 +1,68 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Unverified claims — T1..T4</title>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Syne:wght@400..800&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  /* Radiant Thread theme, verbatim subset — the tokens under test */
+  @theme {
+    --color-ground: #F5E9DB;
+    --color-ink: #24130A;
+    --color-sage: #9BBCAD;
+    --color-crimson: #C75759;
+    --font-display: Caprasimo;
+    --font-body: Syne;
+    --text-4xl: 50px;
+    --font-weight-regular: 400;
+    --font-weight-semibold: 600;
+    --breakpoint-lg: 1200px;
+    --container-canvas: 1200px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --radius-button: 15px;
+  }
+</style>
+<style>body{margin:0;font-family:system-ui;background:#F5E9DB;color:#24130A}</style>
+</head><body>
+
+<!-- T1: does --container-canvas do BOTH jobs? -->
+<section id="t1">
+  <div id="t1-size" class="max-w-canvas bg-sage">max-w-canvas</div>
+
+  <div id="t1-wide" class="@container" style="width:1400px">
+    <div id="t1-wide-child" class="@canvas:bg-crimson">wide container child</div>
+  </div>
+  <div id="t1-narrow" class="@container" style="width:800px">
+    <div id="t1-narrow-child" class="@canvas:bg-crimson">narrow container child</div>
+  </div>
+</section>
+
+<!-- T2: do enumerated --spacing-N tokens disable the dynamic scale? -->
+<section id="t2">
+  <div id="t2-p4"  class="p-4">p-4 (token exists)</div>
+  <div id="t2-p5"  class="p-5">p-5 (no token)</div>
+  <div id="t2-p13" class="p-13">p-13 (no token)</div>
+  <div id="t2-gap" class="flex gap-7"><span>a</span><span>b</span></div>
+</section>
+
+<!-- T3: does defining --breakpoint-lg keep the default scale? -->
+<section id="t3">
+  <div id="t3-sm"  class="sm:bg-crimson">sm</div>
+  <div id="t3-md"  class="md:bg-crimson">md</div>
+  <div id="t3-lg"  class="lg:bg-crimson">lg</div>
+  <div id="t3-xl"  class="xl:bg-crimson">xl</div>
+  <div id="t3-2xl" class="2xl:bg-crimson">2xl</div>
+</section>
+
+<!-- T4: font-semibold on a family that only ships weight 400 -->
+<section id="t4">
+  <span id="t4-reg"      class="font-display text-4xl">Handgloves</span>
+  <span id="t4-semi"     class="font-display text-4xl font-semibold">Handgloves</span>
+  <span id="t4-semi-nosyn" class="font-display text-4xl font-semibold [font-synthesis:none]">Handgloves</span>
+  <span id="t4-body-semi"  class="font-body text-4xl font-semibold">Handgloves</span>
+</section>
+
+</body></html>
