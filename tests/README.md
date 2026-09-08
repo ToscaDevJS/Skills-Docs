@@ -52,3 +52,13 @@ derived scale, a redefined breakpoint against the default scale, and
 
 T3 is viewport-dependent — measure at **1300px** and again at **1100px**. Three
 claims held; T4 was refuted.
+
+## `token-sweep.html`
+
+Full sweep of `color`, `fontSize`, `fontFamily`, `letterSpacing` and `radius`
+(Part 4 of the findings doc) — every declared step, not one sample each.
+
+Includes a deliberately unavailable family, `--font-missing: NotARealTypeface`,
+as a control for silent font substitution. Compare its rendered width against the
+`system-ui` control; do **not** trust `document.fonts.check()`, which reports
+`true` for it.

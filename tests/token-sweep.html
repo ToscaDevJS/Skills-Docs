@@ -1,0 +1,74 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Token sweep — color, fontSize, fontFamily, letterSpacing, radius</title>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Syne:wght@400..800&family=Meow+Script&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  /* Radiant Thread theme, verbatim, plus one deliberately unavailable family */
+  @theme {
+    --color-ground: #F5E9DB;   --color-ink: #24130A;      --color-ink-menu: #19191A;
+    --color-sage: #9BBCAD;     --color-mauve: #A28189;    --color-terracotta: #D59F93;
+    --color-sand: #DEBA8F;     --color-crimson: #C75759;  --color-rust: #B45844;
+    --font-display: Caprasimo; --font-body: Syne;         --font-accent: Meow Script;
+    --font-missing: NotARealTypeface;
+    --text-2xs: 10px; --text-xs: 12px; --text-sm: 13px;  --text-base: 16px;
+    --text-md: 18px;  --text-lg: 28px; --text-xl: 30px;  --text-2xl: 35px;
+    --text-3xl: 40px; --text-4xl: 50px;--text-5xl: 70px; --text-6xl: 100px;
+    --tracking-normal: 0em; --tracking-wide: 0.1em; --tracking-widest: 0.213em;
+    --radius-button: 15px;
+  }
+</style>
+<style>body{margin:0;padding:16px;font-family:system-ui;background:#fff}</style>
+</head><body>
+
+<!-- C1 colour: every token, plus an alpha modifier -->
+<section id="c1" class="flex flex-wrap">
+  <i data-t="ground"     class="bg-ground     block size-8"></i>
+  <i data-t="ink"        class="bg-ink        block size-8"></i>
+  <i data-t="ink-menu"   class="bg-ink-menu   block size-8"></i>
+  <i data-t="sage"       class="bg-sage       block size-8"></i>
+  <i data-t="mauve"      class="bg-mauve      block size-8"></i>
+  <i data-t="terracotta" class="bg-terracotta block size-8"></i>
+  <i data-t="sand"       class="bg-sand       block size-8"></i>
+  <i data-t="crimson"    class="bg-crimson    block size-8"></i>
+  <i data-t="rust"       class="bg-rust       block size-8"></i>
+  <i id="c1-alpha" class="bg-rust/50 block size-8"></i>
+</section>
+
+<!-- C2 font size: the full declared scale -->
+<section id="c2">
+  <p data-t="2xs" class="text-2xs">A</p><p data-t="xs"  class="text-xs">A</p>
+  <p data-t="sm"  class="text-sm">A</p><p data-t="base"class="text-base">A</p>
+  <p data-t="md"  class="text-md">A</p><p data-t="lg"  class="text-lg">A</p>
+  <p data-t="xl"  class="text-xl">A</p><p data-t="2xl" class="text-2xl">A</p>
+  <p data-t="3xl" class="text-3xl">A</p><p data-t="4xl"class="text-4xl">A</p>
+  <p data-t="5xl" class="text-5xl">A</p><p data-t="6xl"class="text-6xl">A</p>
+</section>
+
+<!-- C3 font family: three real + one unavailable, against a system control -->
+<section id="c3" class="text-4xl">
+  <span id="c3-display" class="font-display">Handgloves</span>
+  <span id="c3-body"    class="font-body">Handgloves</span>
+  <span id="c3-accent"  class="font-accent">Handgloves</span>
+  <span id="c3-missing" class="font-missing">Handgloves</span>
+  <span id="c3-control" style="font-family:system-ui">Handgloves</span>
+</section>
+
+<!-- C4 letter spacing: each token at two sizes, to prove em is relative -->
+<section id="c4">
+  <span id="c4-w-10"  class="tracking-widest text-2xs">x</span>
+  <span id="c4-w-100" class="tracking-widest text-6xl">x</span>
+  <span id="c4-d-10"  class="tracking-wide   text-2xs">x</span>
+  <span id="c4-d-100" class="tracking-wide   text-6xl">x</span>
+  <span id="c4-n-100" class="tracking-normal text-6xl">x</span>
+</section>
+
+<!-- C5 radius: custom token beside the untouched default scale -->
+<section id="c5">
+  <i id="c5-button" class="rounded-button block size-8 bg-sage"></i>
+  <i id="c5-sm"     class="rounded-sm     block size-8 bg-sage"></i>
+  <i id="c5-lg"     class="rounded-lg     block size-8 bg-sage"></i>
+  <i id="c5-2xl"    class="rounded-2xl    block size-8 bg-sage"></i>
+  <i id="c5-full"   class="rounded-full   block size-8 bg-sage"></i>
+</section>
+
+</body></html>

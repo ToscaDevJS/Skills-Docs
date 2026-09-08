@@ -283,3 +283,98 @@ something else. Someone asking for emphasis gets nothing, and no warning.
 
 Call `get_font_family_info` before tokenizing a weight — it lists exactly which
 faces a family ships.
+
+---
+
+# Part 4 — Full sweep: colour, font size, family, tracking, radius
+
+Part 2 proved these five faithful for **one instance each** inside a single
+component. This part sweeps the declared scales end to end and adds the cases a
+single component cannot reach.
+
+Runnable page: [`tests/token-sweep.html`](./tests/token-sweep.html).
+
+## C1 — Colour · 9/9 exact
+
+Every palette token renders its declared hex exactly: `ground` `ink` `ink-menu`
+`sage` `mauve` `terracotta` `sand` `crimson` `rust`.
+
+**But an opacity modifier changes the colour space.** `bg-rust/50` computes to:
+
+```
+oklab(0.568575 0.103514 0.0687125 / 0.5)
+```
+
+Tailwind v4 converts through oklab to apply the alpha. The rendered result is
+correct, but the computed value is no longer comparable to the hex you wrote —
+worth knowing before diffing computed styles against tokens in a regression test
+or a codegen check.
+
+## C2 — Font size · 12/12 exact
+
+Every step of the declared scale resolves to its exact pixel value: 10, 12, 13,
+16, 18, 28, 30, 35, 40, 50, 70, 100. No rounding, no drift.
+
+## C3 — Font family · the fallback failure is real, and undetectable
+
+Three real families resolve and render at distinct widths, so each is genuinely
+in use:
+
+| Token | Computed family | Width |
+|-------|-----------------|-------|
+| `font-display` | `Caprasimo` | 290.78px |
+| `font-body` | `Syne` | 259.86px |
+| `font-accent` | `"Meow Script"` | 203.81px |
+
+A deliberately unavailable family was added as a control — `--font-missing:
+NotARealTypeface`:
+
+| Probe | Result |
+|-------|--------|
+| Computed `font-family` | `NotARealTypeface` — the declaration survives |
+| Rendered width | 238.84px — differs from the 252.03px `system-ui` control |
+| `document.fonts.check('16px NotARealTypeface')` | **`true`** |
+
+Two things follow.
+
+The text rendered in *something*, and that something is neither the requested
+face nor a chosen fallback — it is the browser's own default. This is exactly the
+silent substitution Coverage §2 warns about, now measured.
+
+More useful: **`document.fonts.check()` cannot detect a missing family.** It
+returned `true` for a typeface that does not exist. There is no cheap runtime
+assertion that a font token resolved; comparing rendered widths against a known
+control is the only reliable check.
+
+## C4 — Letter spacing · em is relative, and `0em` is not `0px`
+
+| Token | at `text-2xs` (10px) | at `text-6xl` (100px) |
+|-------|----------------------|------------------------|
+| `tracking-widest` (0.213em) | 2.13px | 21.3px |
+| `tracking-wide` (0.1em) | 1px | 10px |
+
+Exactly proportional — `em` tracking scales with the type, which is why it is the
+right unit and why F-04's coercion of bare numbers to `px` is a real hazard.
+
+One detail: `--tracking-normal: 0em` computes to the keyword **`normal`**, not
+`0px`. Behaviourally equivalent in practice, but another value that will not
+match its token when compared as a string.
+
+## C5 — Radius · the whole default scale is still there
+
+| Utility | Computed |
+|---------|----------|
+| `rounded-button` (custom) | 15px |
+| `rounded-sm` | 4px |
+| `rounded-lg` | 8px |
+| `rounded-2xl` | 16px |
+| `rounded-full` | 3.35544e+07px |
+
+The custom token works and **the untouched default scale works alongside it** —
+the same mixed-set result T3 found for breakpoints, now confirmed for radius.
+
+The concrete cost: `--radius-button: 15px` sits one pixel from the default
+`rounded-2xl` at 16px. Both are available, they are visually indistinguishable,
+and nothing in the vocabulary says which one is canonical. That is what a
+namespace left half-owned looks like — clear it with `--radius-*: initial` or
+adopt the default scale, but do not run both.
