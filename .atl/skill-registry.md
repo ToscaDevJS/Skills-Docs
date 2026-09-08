@@ -6,6 +6,7 @@ Last updated: 2026-09-08
 
 ## Sources scanned
 
+- skills
 - /Users/orlandojesus/.agents/skills
 - /Users/orlandojesus/.config/opencode/skills
 - /Users/orlandojesus/.claude/skills
@@ -33,6 +34,7 @@ Last updated: 2026-09-08
 | `issue-creation` | Create and triage GitHub issues from repository evidence. Trigger: issue creation, bug reports, feature requests, or issue approval. | user | `/Users/orlandojesus/.agents/skills/issue-creation/SKILL.md` |
 | `judgment-day` | Trigger: judgment day, dual review, adversarial review, juzgar. Run explicit blind dual review with at most two scoped fix/re-judgment rounds. | user | `/Users/orlandojesus/.agents/skills/judgment-day/SKILL.md` |
 | `orca-cli` | Use the public `orca` CLI to operate Orca-managed worktrees, folder contexts, terminals, repos, automations, artifacts, worktree comments, and the browser embedded inside the Orca app. Use when the user says "$orca-cli", "use orca cli", "Orca worktree", "child worktree", "cardStatus", "spawn codex/claude in a worktree", "read/wait/send Orca terminal", "terminal send", "full handoff", "handover", "give this to another agent", "another worktree", "Orca browser", "orca artifacts", "share HTML/Markdown", "public artifact link", or "control the browser inside Orca". Prefer this over raw `git worktree`, ad hoc PTYs, Playwright, or Computer Use when the task touches Orca-managed state. Use Computer Use for browser windows, webviews, or desktop UI outside Orca's embedded browser. | user | `/Users/orlandojesus/.agents/skills/orca-cli/SKILL.md` |
+| `paper-tailwind-tokens` | Trigger: Paper MCP, design tokens, Tailwind v4, @theme, token export, design system sync, dark mode. Map Paper tokens to native Tailwind v4 theme variables. | project | `/Users/orlandojesus/Desktop/carpeta sin título/skills/paper-tailwind-tokens/SKILL.md` |
 | `rdd-defect-workflow` | Trigger: RDD, receipt-driven development, review authority, receipt/lineage, correction/recovery, delivery gate/kill switch, bounded review defects. Guide work. | user | `/Users/orlandojesus/.agents/skills/rdd-defect-workflow/SKILL.md` |
 | `skill-creator` | Trigger: new skills, agent instructions, documenting AI usage patterns. Create LLM-first skills with valid frontmatter. | user | `/Users/orlandojesus/.agents/skills/skill-creator/SKILL.md` |
 | `skill-improver` | Trigger: improve skills, audit skills, refactor skills, skill quality. Audit and upgrade existing LLM-first skills. | user | `/Users/orlandojesus/.agents/skills/skill-improver/SKILL.md` |
