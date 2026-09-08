@@ -3,6 +3,10 @@
 How to author design tokens in Paper so they drop into a Tailwind v4 codebase
 with zero translation layer — covering light/dark theming and responsive sizing.
 
+Start at [`README.md`](./README.md) for the integration path. For what Paper
+cannot express and how to detect drift, see
+[`tailwind-v4-coverage-and-sync.md`](./tailwind-v4-coverage-and-sync.md).
+
 ---
 
 ## TL;DR
