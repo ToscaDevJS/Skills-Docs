@@ -5,6 +5,8 @@ Controlled tests run in an isolated Paper file, `Token Normalization Test — Pa
 back with `get_tokens`, and — where rendering mattered — applied to a text node
 and screenshotted against a comparison ladder.
 
+Runnable pages for both parts live in [`tests/`](./tests/README.md).
+
 Method note: `get_computed_styles` returns the token *reference*
 (`var(--text-t4)`), not a resolved pixel value. Resolution can only be measured
 visually, by rendering the token beside literal-size reference rows.

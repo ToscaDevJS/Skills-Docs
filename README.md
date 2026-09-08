@@ -12,6 +12,7 @@ translation layer, and keeping them there.
 | [`tailwind-v4-coverage-and-sync.md`](./tailwind-v4-coverage-and-sync.md) | Something Paper cannot express, or the design and the code have drifted |
 | [`skills/paper-tailwind-tokens/`](./skills/paper-tailwind-tokens/SKILL.md) | An agent is doing the work — runtime contract, not prose |
 | [`paper-mcp-normalization-tests.md`](./paper-mcp-normalization-tests.md) | A token value came back different from what you wrote |
+| [`tests/`](./tests/README.md) | You want to re-run the evidence yourself |
 
 ---
 
