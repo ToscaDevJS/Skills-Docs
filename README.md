@@ -11,6 +11,7 @@ translation layer, and keeping them there.
 | [`tailwind-v4-theming-with-paper.md`](./tailwind-v4-theming-with-paper.md) | You are designing the token model — naming, theming, responsive sizing |
 | [`tailwind-v4-coverage-and-sync.md`](./tailwind-v4-coverage-and-sync.md) | Something Paper cannot express, or the design and the code have drifted |
 | [`skills/paper-tailwind-tokens/`](./skills/paper-tailwind-tokens/SKILL.md) | An agent is doing the work — runtime contract, not prose |
+| [`paper-mcp-normalization-tests.md`](./paper-mcp-normalization-tests.md) | A token value came back different from what you wrote |
 
 ---
 
@@ -72,3 +73,5 @@ device.
 | Headings collide with their own line height | `%` or `px` leading inherited by children | Coverage §3 |
 | A card ignores the space it was given | Viewport variant where a container query belongs | Theming §7 |
 | Colors drifted from the design file | No `contentHash` check | Coverage §7 |
+| A written token value reads back changed | Paper normalizes on save | Tests F-01, F-04 |
+| Type looks smaller on canvas than in browser | `rem` token, non-16px root | Tests F-03 |

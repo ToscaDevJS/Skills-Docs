@@ -159,7 +159,10 @@ Conversion is arithmetic — divide by 100:
 ```
 
 > **Paper cannot store the converted value.** Writing `1.2` to a `lineHeight`
-> token normalizes to `120%` on save — verified: writing `2` stored `200%`. The
+> token normalizes to `120%` on save — verified: writing `2` stored `200%`.
+> `%`, `px` and `em` are all preserved, and all three inherit an already-computed
+> pixel value; unitless is the only form that inherits a ratio, and the only one
+> Paper rejects. There is no workaround inside Paper. The
 > conversion is a mandatory export-time step in the codebase, in the same class
 > as `clamp()` and the dark-mode palette swap. Record the intended ratio in the
 > token `description` so the export step has a source of truth.

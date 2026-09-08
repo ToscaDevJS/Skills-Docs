@@ -23,6 +23,8 @@ Load when:
 - Never create a breakpoint for the smallest artboard. Breakpoints are `min-width`; the base size takes no prefix.
 - Declare only breakpoints backed by a designed artboard.
 - Convert every `--leading-*` from `%` to unitless **at export time**. Paper normalizes unitless line-height to a percentage and cannot store a ratio; `%` and `px` pass a computed px value down the whole subtree.
+- Author size tokens in `px`, never `rem`. Paper does not resolve `rem` against a 16px root, so `rem` renders smaller on the canvas than in the browser.
+- Pass `letterSpacing` as an explicit `em` string. A bare number is coerced to px (`0.05` becomes `0.05px`).
 - Never rename a token in one step: alias → migrate usages → verify zero hits → delete.
 - Keep Paper-synced and codebase-owned `@theme` blocks separate. Regeneration replaces only the synced block.
 
@@ -31,7 +33,8 @@ Load when:
 | Need | Action |
 |------|--------|
 | Component must adapt to its slot | `@container` + `@md:`, never viewport `md:` |
-| Value is conditional, computed, or unitless (dark mode, `clamp()`, line-height ratios) | Codebase layer, not Paper |
+| Value is conditional or unitless (dark mode, line-height ratios) | Codebase layer, not Paper |
+| Fluid type | `clamp()` IS storable as a Paper `fontSize` token — use px bounds, not `rem` |
 | Namespace has no Paper type (`shadow`, `ease`, `animate`, `blur`, `aspect`, `perspective`) | Codebase-owned block in `assets/paper-tokens.css` |
 | Font size needs bundled leading or tracking | Add `--text-*--line-height` after export |
 | Taking ownership of a namespace | Clear it with `--ns-*: initial`; never do this for `--spacing-*` |
@@ -53,4 +56,5 @@ Return: tokens created or changed, the generated `@theme` block, namespaces left
 ## References
 
 - `references/docs.md` — index of the full guides.
+- `../../paper-mcp-normalization-tests.md` — measured token normalization behavior.
 - `assets/paper-tokens.css` — two-block stylesheet template.

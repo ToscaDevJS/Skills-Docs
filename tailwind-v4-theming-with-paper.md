@@ -320,13 +320,18 @@ display size does not fit inside a 320px frame. Two valid approaches:
 
 ```css
 @theme {
-  --text-display: clamp(2.5rem, 6vw + 1rem, 6.25rem);
+  --text-display: clamp(40px, 6vw + 16px, 100px);
 }
 ```
 
-Same split as theming: **Paper stores discrete px values per artboard; fluid
-formulas live in the codebase.** Paper's token API takes px strings for sizes, so
-`clamp()` belongs on the Tailwind side, exactly like the dark-mode palette swap.
+**A `clamp()` can be stored as a Paper `fontSize` token** — verified: the value
+survives verbatim and renders on the canvas. See
+[`paper-mcp-normalization-tests.md`](./paper-mcp-normalization-tests.md) F-02.
+
+One caveat decides between the two approaches: `rem` inside Paper does not
+resolve against a 16px root (F-03), so a `clamp()` written with `rem` bounds
+looks smaller on the canvas than it will in the browser. Use px bounds —
+`clamp(40px, 6vw, 100px)` — or keep the fluid formula in the codebase.
 
 ### Spacing is dynamic in v4
 
