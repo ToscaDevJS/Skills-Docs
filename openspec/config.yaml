@@ -28,7 +28,7 @@ testing:
   layers:
     unit: npm run test:contract — isolated package/reference checks
     integration: npm run test:browser — pinned Chromium, offline, 16 rendering assertions
-    e2e: tests/live-paper.md — bounded live Paper protocol, currently not-run
+    e2e: tests/live-paper.md — bounded live Paper protocol, passed 2026-09-09
   agent_behavior: tests/workflow-cases.md — transcript-judged rubrics, currently not-run
   coverage_command: null
   lint_command: null

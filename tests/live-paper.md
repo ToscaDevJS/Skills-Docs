@@ -14,13 +14,32 @@ nothing about any step below.
 | Field | Value |
 | --- | --- |
 | Date | 2026-09-09 |
-| Outcome | **not-run** |
-| What *was* done | Read-only `get_basic_info` and `get_tokens({ format: "tailwind" })` against the existing normalization-test file during exploration. 18 tokens, `contentHash.tokens = df953992`. The export still contained `120%`, `24px`, `1.2em`, `0.05px`, `1rem` and `clamp(1rem, 2vw, 2rem)`. |
-| What was **not** done | No fresh create/write/delete. No migration. No hash-advance observation. No cleanup, because nothing was created. |
+| Outcome | **passed**, with one finding that corrected a repository claim |
+| File | `Token Normalization Test — Paper MCP` (`01M21E5GY1QMZ5CSPQTNNWVD7N`) |
+| Steps executed | L1 ten types · L2 hash advance · L3 migration and rollback · L4 export destination · L5 final hash · L6 cleanup |
+| Start / end hash | `df953992` → `df953992` (five intermediate values) |
+| Tokens created / deleted | 16 / 16 |
+| Cleanup disposition | File **restored, not deleted** — the MCP exposes no `delete_file` |
 
-Read that table before quoting any normalization number from
-`references/normalization-evidence.md` as current. The reads confirm the stored
-values; they do not re-establish the write-time behavior.
+Per-step results, including the raw readbacks, are recorded as **Part 5** of
+`skills/paper-tailwind-tokens/references/normalization-evidence.md`.
+
+### What this run changed
+
+- **F-01 and F-04 confirmed live.** Writing `1.2` to a `lineHeight` reads back
+  `120%`; writing the bare number `0.05` to a `letterSpacing` reads back
+  `0.05px`. These were historical results until now.
+- **F-02 confirmed live** with px bounds: `clamp(40px, 6vw, 100px)` survives
+  verbatim.
+- **Finding A01 was corrected.** Paper does *not* leave a dangling reference
+  when an aliased-from token is deleted — it rewrites the dependent onto the
+  deleted token's target. The dangling failure is real in exported CSS only.
+- **`contentHash.tokens` is content-derived.** Deleting everything returned the
+  file to its exact starting hash. It fingerprints state, never history.
+- **Partial failures are in-band.** A batch with one bad entry succeeds overall
+  and advances the hash; the error entry carries no `name`.
+
+All ten Paper types now have a live sample.
 
 ## Preconditions
 

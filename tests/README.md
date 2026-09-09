@@ -11,8 +11,10 @@ about whether an agent follows the skill, and nothing about live Paper.
 | Agent | [`workflow-cases.md`](workflow-cases.md) | Tool ordering, error handling, refusing to guess — judged from a transcript |
 | Live Paper | [`live-paper.md`](live-paper.md) | Normalization, migration and hash behavior in the real MCP |
 
-The last two are **not automated and currently not-run**. They are written down
-so their absence is visible instead of implied.
+Neither of the last two is automated. The **agent lane is not-run** — written
+down so its absence stays visible instead of implied. The **live Paper lane was
+executed on 2026-09-09 and passed**, and one of its results corrected a claim
+this repository had inferred rather than measured; see its status table.
 
 ## Install and run
 
@@ -68,11 +70,12 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | C4.1 Convertible values | browser · *leading unit matrix* | automated |
 | C4.2 Unknown intent | browser · *leading unit matrix* (dangling alias) + [W4](workflow-cases.md#w4--alias-cycle-and-unresolved-leading--c42) | partial · agent case not-run |
 | C5.1 Completed rename | browser · *rename: the naive protocol breaks* | automated |
-| C5.2 Uncertain consumers / rollback | [W6](workflow-cases.md#w6--rename-direction--c51) + [L3](live-paper.md#l3--migration-and-rollback--c5) | not-run |
+| C5.2 Uncertain consumers / rollback | [W6](workflow-cases.md#w6--rename-direction--c51) + [L3](live-paper.md) | **rollback drill passed 2026-09-09**; agent case not-run |
 | C6.1 Consecutive exports | browser · *two consecutive regenerations*; *shipped template compiles* | automated |
 | C6.1 Installed asset untouched | browser · *two consecutive regenerations* (byte compare) | automated |
 | C7.1 Nested rendering | browser · *@theme inline resolves nested overrides*; *paired modifiers*; *missing family* | automated |
-| C7 Fluid storage ≠ viewport fidelity | [L1](live-paper.md#l1--ten-types-round-trip--v6) fluid entry | not-run |
+| C7 Fluid storage ≠ viewport fidelity | [L1](live-paper.md) fluid entry | **passed 2026-09-09** — `clamp(40px, 6vw, 100px)` stored verbatim |
+
 | C8.1 Stable export | [W5](workflow-cases.md#w5--stale-hash--c81--c82) + [L5](live-paper.md#l5--final-hash) | not-run |
 | C8.2 Unavailable or changing source | [W5](workflow-cases.md#w5--stale-hash--c81--c82) + [L5](live-paper.md#l5--final-hash) | not-run |
 
@@ -90,7 +93,7 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | V4.2 Missing face | browser · *missing family* | automated |
 | V5.1 Coverage inventory | this table | automated by inspection |
 | V5.2 Agent workflow cases | [workflow-cases.md](workflow-cases.md) | not-run |
-| V6.1 Available Paper | [live-paper.md](live-paper.md) | not-run |
+| V6.1 Available Paper | [live-paper.md](live-paper.md) | **passed 2026-09-09** |
 | V6.2 Missing live evidence | [live-paper.md](live-paper.md) status table | recorded |
 
 ## Environment-bound numbers
