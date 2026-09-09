@@ -9,4 +9,4 @@
 ## Loading protocol
 
 Read the full `SKILL.md` before creating, exporting, or auditing Paper design
-tokens. The skill is the runtime contract; the root guides are its references.
+tokens. The skill is the runtime contract; its supporting guides are packaged in `skills/paper-tailwind-tokens/references/`.
