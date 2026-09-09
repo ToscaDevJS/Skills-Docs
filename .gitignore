@@ -1,0 +1,7 @@
+# Local AI runtime state
+.atl/
+.codegraph/
+
+# Test toolchain and generated output
+node_modules/
+build/

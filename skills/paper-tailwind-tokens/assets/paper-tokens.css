@@ -1,47 +1,90 @@
-/* Template: two-block token stylesheet.
-   Block 1 is generated. Block 2 is written by hand. Never merge them. */
+/* Template: three-region token stylesheet.
+   Copy this file into the consumer codebase (e.g. src/styles/paper-tokens.css).
+   Never regenerate over the installed skill asset.
+
+   Region 1  palette          owned by the application
+   Region 2  generated        replaced verbatim on every export — MARKED
+   Region 3  application      owned by the application
+
+   Only the text between the two `paper-tokens:generated` markers is machine
+   written. Anything you put inside them is destroyed by the next export. */
 
 @import "tailwindcss";
 
-/* ── Palette — raw values, swapped per theme ───────────────────── */
+/* ═══ Region 1 — palette, application-owned ═══════════════════════
+   Raw values under one `--palette-*` prefix so they never collide with a
+   Tailwind namespace and never generate utilities of their own. Theme
+   switching happens here, and it works in nested scopes because Region 2
+   binds semantics with `@theme inline`. */
+
 :root {
-  --ground: #F5E9DB;
-  --ink:    #24130A;
-  --accent: #B45844;
+  --palette-ground: #F5E9DB;
+  --palette-ink:    #24130A;
+  --palette-accent: #B45844;
 }
 
 [data-theme="dark"] {
-  --ground: #19191A;
-  --ink:    #F5E9DB;
-  --accent: #D59F93;
+  --palette-ground: #19191A;
+  --palette-ink:    #F5E9DB;
+  --palette-accent: #D59F93;
 }
 
-/* ── Synced from Paper — get_tokens({ format: "tailwind" }) ────────
-   Regenerating replaces THIS BLOCK ONLY.
-   contentHash.tokens: <paste here>                                  */
+/* paper-tokens:generated:start
+   Source: get_tokens({ format: "tailwind" })
+   file: <paper file id>
+   contentHash.tokens: <hash read AFTER the last mutation>
+   Inherited --leading-* values are converted to unitless here; unresolved
+   values are reported in the export output, never guessed. */
 @theme inline {
-  --color-surface: var(--ground);
-  --color-content: var(--ink);
-  --color-accent:  var(--accent);
+  --color-surface: var(--palette-ground);
+  --color-content: var(--palette-ink);
+  --color-accent:  var(--palette-accent);
 
-  --font-display: "Caprasimo", ui-serif, Georgia, serif;
-  --font-body:    "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Caprasimo";
+  --font-body:    "Syne";
 
   --text-lg: 28px;
-  --text-lg--line-height: 1.2;
 
-  --breakpoint-*: initial;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1200px;
 
   --container-prose:  680px;
   --container-canvas: 1200px;
 
-  --spacing: 4px;
-}
+  --leading-normal: 1.2;
+  --tracking-wide: 0.213em;
 
-/* ── Codebase-owned — no Paper equivalent, maintained here ───────── */
+  --radius-button: 15px;
+}
+/* paper-tokens:generated:end */
+
+/* ═══ Region 3 — application-owned ════════════════════════════════
+   Everything Paper cannot express, plus everything that must survive the
+   next export. A later `@theme` block wins on the properties it redeclares,
+   so these override the generated region without editing it. */
+
 @theme {
+  /* Fallback stacks. Paper stores the family name alone. */
+  --font-display: "Caprasimo", ui-serif, Georgia, serif;
+  --font-body:    "Syne", ui-sans-serif, system-ui, sans-serif;
+
+  /* Paired modifiers. Paper keeps size, leading and tracking as three
+     independent token types; the pairing only exists here. */
+  --text-lg--line-height:    1.2;
+  --text-lg--letter-spacing: -0.01em;
+
+  /* Namespace reset. Declared here, after the generated region, so an export
+     that adds a breakpoint cannot silently reintroduce the default scale.
+     Never do this for --spacing-*. */
+  --breakpoint-*: initial;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1200px;
+
+  /* Derived spacing base. One unit; p-1, p-13, gap-97 resolve via calc(). */
+  --spacing: 4px;
+
+  /* No Paper equivalent — elevation and motion. Shadows are tinted with the
+     ink color so they belong to the same scene as the palette. */
   --shadow-raised:  0 1px 2px rgb(36 19 10 / 0.06),
                     0 4px 12px rgb(36 19 10 / 0.08);
   --shadow-overlay: 0 12px 32px rgb(36 19 10 / 0.16);

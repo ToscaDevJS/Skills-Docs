@@ -3,9 +3,21 @@
   "version": "1.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": "24.x" },
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:contract": "node --test tests/contract.test.mjs"
+    "test:contract": "node --test tests/contract.test.mjs",
+    "test:browser": "node --test tests/browser.test.mjs",
+    "build": "tailwindcss --input tests/support/build-entry.css --output build/paper-tokens.build.css"
+  },
+  "devDependencies": {
+    "@fontsource/caprasimo": "5.3.0",
+    "@fontsource/meow-script": "5.3.0",
+    "@fontsource/syne": "5.3.0",
+    "@tailwindcss/browser": "4.3.3",
+    "@tailwindcss/cli": "4.3.3",
+    "playwright": "1.63.0"
   }
 }
