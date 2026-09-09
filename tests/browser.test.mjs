@@ -307,6 +307,57 @@ test('viewport breakpoints switch exactly at min-width, container queries at slo
   });
 });
 
+test('one --container-* token serves both max-width and the container threshold', async () => {
+  // T1. The boundary test above declares its own thresholds and only ever uses
+  // the @canvas: variant. This asserts the *double duty* on a real Radiant
+  // Thread token: the same --container-canvas answers a width utility and a
+  // container query, which is the claim that made the token worth keeping.
+  await withBrowser({ viewport: 1300 }, async ({ page, open }) => {
+    await open('/unverified-claims.html');
+
+    assert.equal(await computed(page, '#t1-size', 'max-width'), '1200px',
+      'max-w-canvas must resolve from the same token');
+
+    // Both slots are measured at one viewport, so the viewport cannot explain
+    // the difference between them.
+    assert.equal(await computed(page, '#t1-wide-child', 'background-color'), rgb('#C75759'),
+      '@canvas applies in a 1400px slot');
+    assert.equal(await computed(page, '#t1-narrow-child', 'background-color'), 'rgba(0, 0, 0, 0)',
+      '@canvas must not apply in an 800px slot at the same viewport');
+  });
+});
+
+test('a custom breakpoint moves one step and leaves the default scale standing', async () => {
+  // T3. The boundary test covers the *reset* case, where --breakpoint-*: initial
+  // clears the defaults. This is the opposite case: declaring --breakpoint-lg
+  // without a reset, which keeps every default and relocates one of them.
+  const active = async (page, step) =>
+    (await computed(page, `#t3-${step}`, 'background-color')) !== 'rgba(0, 0, 0, 0)';
+
+  await withBrowser({ viewport: 1300 }, async ({ page, open }) => {
+    await open('/unverified-claims.html');
+
+    // 1300px: every default below it fires, and 2xl (1536) does not — so the
+    // defaults were never cleared.
+    assert.equal(await active(page, 'sm'), true, 'sm (640) is still the default');
+    assert.equal(await active(page, 'md'), true, 'md (768) is still the default');
+    assert.equal(await active(page, 'xl'), true, 'xl (1280) is still the default');
+    assert.equal(await active(page, '2xl'), false, '2xl (1536) is still the default');
+    assert.equal(await active(page, 'lg'), true, 'the redeclared lg fires above 1200');
+
+    // 1100px is the discriminating width: the default lg is 1024, so a default
+    // lg would fire here. It does not, which is how we know the token moved it
+    // to 1200 rather than adding a new step beside it.
+    await page.setViewportSize({ width: 1100, height: 900 });
+    assert.equal(await active(page, 'lg'), false, 'lg moved from 1024 to 1200');
+    assert.equal(await active(page, 'md'), true, 'md is unaffected by the move');
+    assert.equal(await active(page, 'xl'), false, 'xl (1280) is unaffected by the move');
+
+    // The deformation the finding names: md → lg now spans 432px while
+    // lg → xl spans 80px. The scale still works; it is no longer even.
+  });
+});
+
 // ── V3.1 — sweeps driven by the fixtures' own declarations ───────────────────
 
 test('token sweep: every declared color and font size renders its declared value', async () => {

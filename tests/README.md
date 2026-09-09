@@ -90,6 +90,8 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | V2.2 Broken reference | contract · *missing reference*; *reference outside the package*; *symlink* | automated |
 | V3.1 Correct examples | browser · template, regeneration, rename, sweep, spacing, CTA | automated |
 | V3.1 Full sweep probes | browser · every `token-sweep.html` probe, alpha modifier and `rounded-full` included | automated |
+| C3 `--container-*` double duty | browser · *one --container-\* token serves both max-width and the container threshold* | automated |
+| C3 Custom breakpoint without a reset | browser · *a custom breakpoint moves one step and leaves the default scale standing* | automated |
 | V3.2 Boundary and failure controls | browser · *viewport … container*; *F-01*; *leading unit matrix*; *rename* | automated |
 | V4.1 Synthesis comparison | browser · *font synthesis changes the raster*, with the *font weight* positive control | automated |
 | V4.2 Missing face | browser · *missing family* | automated |
