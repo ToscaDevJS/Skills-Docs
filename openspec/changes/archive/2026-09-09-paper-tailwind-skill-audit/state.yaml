@@ -1,0 +1,105 @@
+change: paper-tailwind-skill-audit
+updated: 2026-09-09
+artifact_store: openspec
+execution: main-thread-only
+delivery_strategy: ask-on-risk
+phase: archive
+phase_status: done
+artifacts:
+  exploration: exploration.md
+  proposal: proposal.md
+  specs:
+    - specs/paper-tailwind-skill-contract/spec.md
+    - specs/paper-tailwind-validation/spec.md
+  design: design.md
+  tasks: tasks.md
+preproposal:
+  revision: 1
+  exploration_outcome: done
+  exploration_reference: exploration.md
+  formal_research_selected: false
+  formal_research_offer: Optional research phase offered during the audit; no selection received.
+  decisions_status: confirmed
+  decisions_basis: User requested skill/test audit and SDD; orchestrator resolved routine planning scope from repository evidence.
+  decisions:
+    - Preserve the deliverable as an installable skill with local references and regression tests.
+    - Propose safe canonical-token migration and distinct generated/manual CSS ownership.
+    - Require explicit intent for absolute leading conversion; report unresolved values rather than invent ratios.
+    - Separate deterministic local checks from bounded live Paper evidence.
+    - Defer an exporter service and CI authentication integration.
+  proposal_ready: true
+implementation:
+  started: true
+  completed: 2026-09-09
+  executed_in: main thread, no subagents, as instructed
+  tasks_completed: 13 of 13
+  note: All five work units applied and measured; U4 and U5 exceed 400 lines and are reported in tasks.md rather than compressed.
+delivery_decision:
+  status: confirmed
+  selected: stacked-to-main
+  authorization: User confirmed the proposed five-unit split before apply.
+  options:
+    - stacked-to-main
+    - feature-branch-chain
+    - size-exception
+verification:
+  formal_report: present
+  date: 2026-09-09
+  environment: Node 24.14.0, Playwright 1.63.0, Chromium build 1243, Tailwind 4.3.3, macOS arm64
+  commands:
+    - command: npm test
+      result: 21 pass, 0 fail, exit 0
+    - command: npm run test:contract
+      result: 5 pass, 0 fail
+    - command: npm run test:browser
+      result: 16 pass, 0 fail
+    - command: npm run build
+      result: exit 0, build/paper-tokens.build.css emitted (905 lines)
+  negative_control:
+    description: A deliberately wrong expected value was injected into the radius assertion.
+    result: npm test exited 1; restored source exits 0. V1.2 satisfied empirically.
+  requirements:
+    automated:
+      - C1.1 isolated installation and metadata
+      - C3.2 consumer boundaries and derived spacing
+      - C4.1 convertible leading values
+      - C5.1 canonical value survives alias removal
+      - C6.1 two consecutive regenerations; installed asset unchanged
+      - C7.1 nested theme scope, paired modifiers, font fallback
+      - V1.1 offline execution with external requests aborted
+      - V1.2 broken environment and wrong-expectation controls
+      - V2.1 and V2.2 reference isolation with negative controls
+      - V3.1 and V3.2 rendering regressions and boundary controls
+      - V4.1 same-element synthesis raster comparison
+      - V4.2 missing family reported separately from the face set
+      - V5.1 coverage inventory in tests/README.md
+    not_run:
+      - C1.2, C2.1, C2.2, C3.1 and the agent halves of C4.2, C5.2, C8.1, C8.2 — tests/workflow-cases.md, 8 cases, all not-run
+      - V5.2 agent workflow judging — no transcript collected this cycle
+      - V6.1 live Paper protocol — tests/live-paper.md, not-run; exploration made read-only calls only
+  evidence: >-
+    Local lanes are reproducible and offline. The agent and live Paper lanes are
+    written down and explicitly not-run; no result in this change claims otherwise.
+  corrections_recorded:
+    - T4 font-synthesis conclusion refuted and corrected in normalization-evidence.md
+    - C3 "width comparison is the only reliable check" narrowed to a smoke test
+    - F-01 fixture parent corrected from an implied 18px to an explicit 16px
+    - Rename protocol direction reversed; the dangling-alias failure is now a test
+    - contentHash capture moved to after the last mutation; unreachable is not clean
+  ready_for_archive: true
+  archive_blockers: none — the not-run lanes are recorded as not-run, which is their contracted state
+delivery:
+  merged: 2026-09-09
+  strategy: stacked-to-main
+  pull_requests: [1, 2, 3, 4, 5]
+  main_head_after_merge: 2611e46
+  suite_on_main: 21 pass, 0 fail
+  branches: deleted after merge
+archive:
+  date: 2026-09-09
+  report: archive-report.md
+  specs_promoted:
+    - openspec/specs/paper-tailwind-skill-contract/spec.md
+    - openspec/specs/paper-tailwind-validation/spec.md
+  live_lane: passed 2026-09-09 — corrected finding A01 for the Paper side
+  agent_lane: not-run — cannot be judged from the session that authored the skill
