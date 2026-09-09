@@ -417,3 +417,101 @@ The concrete cost: `--radius-button: 15px` sits one pixel from the default
 and nothing in the vocabulary says which one is canonical. That is what a
 namespace left half-owned looks like — clear it with `--radius-*: initial` or
 adopt the default scale, but do not run both.
+
+---
+
+# Part 5 — Live MCP run, 2026-09-09
+
+Executed against the disposable file `Token Normalization Test — Paper MCP`
+(`01M21E5GY1QMZ5CSPQTNNWVD7N`) following `tests/live-paper.md`. Unlike Parts 1–4,
+every value below is a **fresh write and readback**, not a historical result.
+
+Start hash `df953992` · 18 pre-existing tokens.
+
+## L1 — all ten types, written and read back
+
+| Type | Written | Read back | Verdict |
+|------|---------|-----------|---------|
+| `color` | `#B45844` | `#B45844` | verbatim |
+| `fontFamily` | `Syne` | `Syne` | verbatim |
+| `fontSize` | `28px` | `28px` | verbatim |
+| `fontSize` fluid | `clamp(40px, 6vw, 100px)` | identical | **F-02 confirmed live** |
+| `fontSize` rem control | `1rem` | `1rem` | string preserved (F-03 unchanged) |
+| `fontWeight` | `600` | `600` | verbatim |
+| `letterSpacing` | `"0.05em"` | `0.05em` | verbatim |
+| `letterSpacing` bare number | `0.05` | **`0.05px`** | **F-04 confirmed live** |
+| `lineHeight` | `1.2` (number) | **`120%`** | **F-01 confirmed live** |
+| `spacing` | `4px` | `4px` | verbatim |
+| `radius` | `15px` | `15px` | verbatim |
+| `breakpoint` | `768px` | `768px` | verbatim |
+| `container` | `1200px` | `1200px` | verbatim |
+
+All ten Paper types now have a live sample. The export groups by type rather
+than by declaration order.
+
+**`create_tokens` requires an explicit `type` per entry.** Omitting it rejects
+the entire call, and the rejection enumerates the accepted values — which are
+exactly the ten types this skill documents. That enum is the primary evidence
+for the "exactly ten" claim; it was previously asserted from the docs.
+
+## L2 — hash advance
+
+Every mutation response carries the new `contentHash.tokens`. The creation of
+the L1 batch moved `df953992 → 6af0cfdb` in the same response, so a separate
+`get_basic_info` was not needed to observe the advance.
+
+## L3 — migration, and a correction
+
+Set up `--color-l3brand: #B45844` (canonical), `--color-l3old:
+var(--color-l3brand)` (compatibility alias) and `--color-l3naive:
+var(--color-l3old)` (the naive protocol under test), then deleted
+`--color-l3old`.
+
+| Token | After deletion | Meaning |
+|-------|----------------|---------|
+| `--color-l3brand` | `#B45844` | Corrected protocol: canonical value survives |
+| `--color-l3naive` | **`var(--color-l3brand)`** | Paper **repaired** the chain |
+
+> **This refutes the Paper half of finding A01.** The audit inferred from a
+> browser reproduction that the naive rename leaves a dangling token reference
+> in Paper. It does not: Paper rewrites a dependent onto the deleted token's own
+> target. The dangling failure is real in **exported CSS**, where nothing
+> repairs it, and the browser test still proves that. The corrected protocol
+> stays recommended — it does not depend on Paper's repair behaviour, and it is
+> the only safe order for a stylesheet edited by hand.
+
+`find_nodes` returned `count: 0` for `--color-l3old` while `--color-l3naive`
+depended on it. It searches nodes, not token references.
+
+Rollback drill: re-creating `--color-l3old: #B45844` from the recorded pair
+restored it exactly.
+
+## L4 — partial failure is in-band
+
+One batch sent a valid delete beside an update to a non-existent token:
+
+```json
+{ "tokens": [
+    { "name": "--color-l3old",          "result": "deleted" },
+    { "result": "error", "message": "Token not found: \"--color-does-not-exist\"." }
+  ],
+  "count": 2, "contentHash": { "tokens": "cad454f9" } }
+```
+
+The call **succeeded overall** and the hash advanced. An agent that treats "no
+exception thrown" as success reports a clean run while an entry failed. Note
+also that the error entry carries **no `name`** — results must be matched by
+position.
+
+## L5 / L6 — cleanup and a hash property
+
+All sixteen tokens created during this run were deleted. The file returned to
+18 tokens and to hash **`df953992`** — byte-for-byte the starting fingerprint,
+after five intermediate hashes.
+
+`contentHash.tokens` is therefore **content-derived, not a revision counter**.
+It answers what the tokens are, never what happened to them.
+
+Cleanup disposition: the file was **restored, not deleted**. The MCP exposes no
+`delete_file`, so a disposable Paper file can be emptied of test tokens but not
+removed from the workspace.

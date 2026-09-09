@@ -23,7 +23,10 @@ touches no token.
 
 - Call `get_guide({ topic: "paper-mcp-instructions" })` before any other Paper tool in the session.
 - Name every token with a Tailwind v4 namespace. Paper stores exactly ten types: `--color-*`, `--font-*`, `--text-*`, `--font-weight-*`, `--tracking-*`, `--leading-*`, `--spacing-*`, `--radius-*`, `--breakpoint-*`, `--container-*`.
-- Inspect every per-entry result of a mutation and read the tokens back. A partial failure is reported as a partial failure; never report complete success.
+- Pass an explicit `type` on every `create_tokens` entry. The accepted values are exactly the ten Paper types; omitting `type` rejects the whole call.
+- Inspect every per-entry result of a mutation and read the tokens back. A partial failure is reported as a partial failure; never report complete success. A batch with one bad entry still succeeds overall and still advances the hash.
+- Match per-entry results **by position**. A failed entry comes back as `{ result: "error", message }` with **no `name` field**, so keying results by name silently drops it.
+- `find_nodes` finds canvas consumers, not token-to-token references. A `count: 0` means no node uses the token — never that nothing references it.
 - Declare aliased theme variables inside `@theme inline`. Plain `@theme` resolves at `:root` and breaks nested theme scopes.
 - Never create a breakpoint for the smallest artboard. Breakpoints are `min-width`; the base size takes no prefix. Declare only breakpoints backed by a designed artboard.
 - Convert inherited `--leading-*` to unitless **at export time** using the branch table below. Paper normalizes unitless line-height to a percentage and cannot store a ratio; `%`, `px` and `em` all pass a computed px value down the whole subtree.

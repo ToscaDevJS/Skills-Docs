@@ -265,12 +265,31 @@ Every `bg-accent`, `text-accent` and `border-accent` in the codebase is now a
 class Tailwind does not generate. No build error. No type error. The element
 simply loses its color.
 
-**The obvious protocol is broken.** Creating the new token as
-`--color-brand: var(--color-accent)` and then deleting `--color-accent` leaves
-the new token pointing at a name that no longer exists. The custom property
-resolves to empty and the element falls back to inherited ink — reproduced in
-`tests/browser.test.mjs` (`alias deletion`). A zero-hit search on utility
-classes does not catch it, because the dangling reference is token-to-token.
+**The obvious protocol is broken — but only on one side of the seam.** Creating
+the new token as `--color-brand: var(--color-accent)` and then deleting
+`--color-accent` leaves the new token pointing at a name that no longer exists.
+In CSS the custom property resolves to empty and the element falls back to
+inherited ink, reproduced in `tests/browser.test.mjs` (`rename: the naive
+protocol breaks`).
+
+> **Measured against live Paper on 2026-09-09.** Paper does **not** produce the
+> dangling reference. Deleting a token that another token aliases causes Paper
+> to rewrite the dependent to the deleted token's own target: with
+> `--color-l3naive: var(--color-l3old)` and `--color-l3old:
+> var(--color-l3brand)`, deleting `--color-l3old` left
+> `--color-l3naive: var(--color-l3brand)`. The alias chain is repaired, not
+> broken. Protocol L3 in `tests/live-paper.md`.
+>
+> So the danger lives in the **exported stylesheet**, not in the design file. A
+> hand-written `--new: var(--old)` in the consumer's CSS, or an export captured
+> mid-migration, still dangles exactly as the browser test shows. Do not rely on
+> Paper's repair to cover a codebase you edit by hand.
+
+A zero-hit search on utility classes does not catch either case, because the
+reference is token-to-token. Neither does `find_nodes`: it searches **nodes**,
+and it returned `count: 0` for a token another token depended on. A clean
+`find_nodes` result means no canvas element uses the token — never that the
+token is unreferenced.
 
 **Migration protocol — direction matters:**
 
@@ -331,6 +350,21 @@ styles/
 
 Store the file id alongside the hash. A hash without its source file is not a
 drift check, it is a string.
+
+> **The hash is content-derived, not a revision counter.** Measured on
+> 2026-09-09: a file at `df953992` took sixteen created tokens (advancing
+> through `6af0cfdb`, `f0caa43a`, `ecb5278b`, `cad454f9`, `d793defa`), then had
+> all sixteen deleted — and returned to **exactly `df953992`**.
+>
+> That is the property a drift check needs: identical token content always
+> produces an identical fingerprint, so a round trip that ends where it started
+> correctly reports "in sync". It also means the hash answers *what the tokens
+> are*, never *what happened to them*. A file edited and reverted is
+> indistinguishable from one nobody touched. Use it to detect divergence, not to
+> audit activity.
+>
+> Every mutation response carries the new `contentHash.tokens`, so the
+> post-export read in step 3 is usually free — the last write already told you.
 
 ```bash
 # ILLUSTRATIVE PSEUDOCODE — `paper-token-hash` does not exist.
