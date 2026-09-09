@@ -157,10 +157,17 @@ it. The agent also names which namespaces it is taking ownership of.
 
 ## How to run these
 
+Operator instructions, seeding recipes and the verbatim prompts live in
+[`workflow-runner.md`](workflow-runner.md). The short version:
+
 1. Start a session with only the skill installed — no repository context that
-   restates the rules.
+   restates the rules. **The session under test must never see this file**: it
+   states the expected tool order, so an agent that reads it performs the right
+   sequence because it was told.
 2. Give the input verbatim. Do not hint at the expected tool order.
-3. Save the transcript beside this file with a dated name.
+3. Save the transcript as `tests/transcripts/2026-MM-DD-W<n>.md`.
 4. Judge against **Expected** and **Fail signal**, and record the status here
    with a link to the transcript. Partial credit is a `failed` with a note, not
    a `passed`.
+5. A failure is a finding about the skill. Open an issue against `SKILL.md`
+   rather than rewriting the rubric to match the behaviour.
