@@ -1,0 +1,6 @@
+/* Build entry for `npm run build`.
+   Compiles the shipped template against the repository fixtures so a change
+   that breaks the stylesheet fails the build, not only the browser lane. */
+
+@import "../../skills/paper-tailwind-tokens/assets/paper-tokens.css";
+@source "../../tests";
