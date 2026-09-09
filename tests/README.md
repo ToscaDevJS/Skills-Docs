@@ -8,7 +8,7 @@ about whether an agent follows the skill, and nothing about live Paper.
 | --- | --- | --- |
 | Contract | `npm run test:contract` | The installed skill is self-contained and its metadata is intact |
 | Browser | `npm run test:browser` | What the generated CSS actually does in a pinned Chromium |
-| Agent | [`workflow-cases.md`](workflow-cases.md) | Tool ordering, error handling, refusing to guess — judged from a transcript |
+| Agent | [`workflow-cases.md`](workflow-cases.md) · run it with [`workflow-runner.md`](workflow-runner.md) | Tool ordering, error handling, refusing to guess — judged from a transcript |
 | Live Paper | [`live-paper.md`](live-paper.md) | Normalization, migration and hash behavior in the real MCP |
 
 Neither of the last two is automated. The **agent lane is not-run** — written
