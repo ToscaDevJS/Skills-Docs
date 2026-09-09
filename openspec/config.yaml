@@ -1,0 +1,71 @@
+schema: spec-driven
+
+context: |
+  Project: paper-tailwind-tokens skill, packaged Markdown references, CSS template, four HTML probes.
+  Runtime integrations: Paper MCP and Tailwind CSS v4, pinned locally (no CDN at test time).
+  A Node 24 package manifest, a workspace test command, and a build command now exist.
+  Audit and SDD phases run in the main conversation; the user forbids subagents.
+  Preserve historical fixtures and distinguish observed behavior from untested claims.
+
+strict_tdd: true
+testing:
+  detected: 2026-09-09
+  discovery: Root manifest inspected after the paper-tailwind-skill-audit change added it.
+  projects:
+    - name: paper-tailwind-tokens-skill
+      manifest: package.json
+      runner: node --test
+  workspace_test_command: npm test
+  strict_tdd_reason: >-
+    A pinned Node test runner and a documented workspace command now exist, so the
+    condition that disabled strict TDD (no manifest, no runner) no longer holds.
+  manual_probes:
+    - tests/f01-leading-inheritance.html
+    - tests/roundtrip-final-cta.html
+    - tests/unverified-claims.html
+    - tests/token-sweep.html
+  probe_command: npm run probes
+  layers:
+    unit: npm run test:contract — isolated package/reference checks
+    integration: npm run test:browser — pinned Chromium, offline, 16 rendering assertions
+    e2e: tests/live-paper.md — bounded live Paper protocol, passed 2026-09-09
+  agent_behavior: tests/workflow-cases.md — transcript-judged rubrics, currently not-run
+  coverage_command: null
+  lint_command: null
+  typecheck_command: null
+  format_command: null
+  build_command: npm run build
+  enforcement:
+    pre_commit_hook: .githooks/pre-commit — runs `npm test`, blocks the commit on nonzero exit
+    wired_by: npm `prepare` script sets core.hooksPath to .githooks
+    verified: 2026-09-09 — wrong expectation exits 1, restored suite exits 0
+    limits: >-
+      Bypassable with `git commit --no-verify`, and no CI runs it. It catches an
+      honest mistake; it is not evidence that every commit was tested.
+  external_access: >-
+    The browser lane aborts every request that is not the loopback fixture server.
+    Dependencies and font faces are served from node_modules.
+
+rules:
+  proposal:
+    - Prioritize skill portability, safe token migration, ownership preservation, and reproducible evidence.
+  specs:
+    - Map every runtime rule and decision gate to observable Given/When/Then scenarios.
+  design:
+    - Keep Paper live checks separate from deterministic local contract and browser checks.
+  tasks:
+    - Separate documentation corrections, fixture repairs, and test automation.
+  apply:
+    guidelines:
+      - Execute in the main thread without subagents.
+      - Preserve source fixtures until a change explicitly covers their correction.
+      - Assert environment-bound numbers by direction; never against a historical constant.
+    tdd: true
+    test_command: npm test
+  verify:
+    test_command: npm test
+    build_command: npm run build
+    coverage_threshold: 0
+  archive:
+    - Do not claim functional completeness from manual screenshots or historical measurements alone.
+    - Report the agent and live Paper lanes by their recorded status, including not-run.

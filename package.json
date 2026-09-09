@@ -11,7 +11,8 @@
     "test:contract": "node --test tests/contract.test.mjs",
     "test:browser": "node --test tests/browser.test.mjs",
     "build": "tailwindcss --input tests/support/build-entry.css --output build/paper-tokens.build.css",
-    "probes": "node tests/support/serve.mjs"
+    "probes": "node tests/support/serve.mjs",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
     "@fontsource/caprasimo": "5.3.0",
