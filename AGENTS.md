@@ -10,3 +10,6 @@
 
 Read the full `SKILL.md` before creating, exporting, or auditing Paper design
 tokens. The skill is the runtime contract; its supporting guides are packaged in `skills/paper-tailwind-tokens/references/`.
+
+Regression evidence for the runtime rules is in `tests/README.md`, which maps
+every requirement to an automated check or to an explicitly not-run protocol.
