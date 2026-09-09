@@ -56,5 +56,5 @@ Return: tokens created or changed, the generated `@theme` block, namespaces left
 ## References
 
 - `references/docs.md` — index of the full guides.
-- `../../paper-mcp-normalization-tests.md` — measured token normalization behavior.
+- `references/normalization-evidence.md` — measured token normalization behavior.
 - `assets/paper-tokens.css` — two-block stylesheet template.
