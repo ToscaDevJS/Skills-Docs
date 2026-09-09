@@ -5,3 +5,6 @@
 # Test toolchain and generated output
 node_modules/
 build/
+
+# macOS
+.DS_Store
