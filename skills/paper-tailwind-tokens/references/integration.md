@@ -31,10 +31,15 @@ Palette tokens hold raw values. Semantic tokens alias them with
 get_tokens({ format: "tailwind" })
 ```
 
-**4. Land the export in its own block.**
+**4. Land the export in a delimited region of *your* stylesheet.**
+
+Copy `assets/paper-tokens.css` into the codebase once, then regenerate only
+between the markers. The installed skill asset is a template, never a target.
 
 ```css
-/* styles/paper-tokens.css — generated, never edited by hand */
+/* styles/paper-tokens.css */
+/* paper-tokens:generated:start  — replaced on every export */
+/* paper-tokens:generated:end */
 ```
 
 **5. Wire theming with `@theme inline`.**
@@ -45,16 +50,22 @@ Palette on `:root` and `[data-theme="dark"]`; semantic layer inside
 Fallback font stacks, `--text-*--line-height` pairs, shadows, easing,
 animations — in a second block, clearly marked as codebase-owned.
 
-**7. Record `contentHash.tokens` and check it in CI.**
-This is what stops the design file and the codebase from silently diverging.
+**7. Record the *final* `contentHash.tokens` and check it in CI.**
+Read it again after the last mutation, bind it to the file id it came from, and
+treat an unreachable design file as unknown rather than clean. See Coverage §7 —
+the CI snippet there is illustrative pseudocode until you supply an MCP adapter.
 
 ---
 
 ## Two rules worth memorizing
 
-**Paper stores one discrete value per token.** Anything conditional or
-computed — dark mode, `clamp()`, media queries — lives in the codebase. That is
-not a limitation to fight; it is the seam. Design it deliberately.
+**Paper stores one discrete value per token.** Anything *conditional* — dark
+mode, media queries, a value that depends on which theme is active — lives in the
+codebase. A self-contained computed value is a different case: `clamp()` with px
+bounds is stored verbatim by Paper and renders on the canvas (Tests F-02).
+Storing it does not prove the canvas and the browser agree at every viewport
+width; it proves the string survives. That seam is not a limitation to fight —
+design it deliberately.
 
 **Mobile-first means the smallest size has no prefix.** Breakpoints are
 `min-width`. A breakpoint named after your smallest artboard matches every

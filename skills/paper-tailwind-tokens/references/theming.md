@@ -335,7 +335,8 @@ looks smaller on the canvas than it will in the browser. Use px bounds —
 
 ### Spacing is dynamic in v4
 
-Do not enumerate a spacing scale. Define the base unit and every step is derived:
+Do not enumerate a spacing scale **in the browser vocabulary**. Define the base
+unit and every step is derived:
 
 ```css
 @theme {
@@ -344,8 +345,23 @@ Do not enumerate a spacing scale. Define the base unit and every step is derived
 ```
 
 `p-1`, `p-5`, `p-13`, `gap-97` all resolve via `calc()`. Enumerating
-`--spacing-1 … --spacing-8` invites gaps in the ramp (missing `20`, missing `40`)
-that show up as inconsistent rhythm in the design.
+`--spacing-1 … --spacing-8` in the stylesheet invites gaps in the ramp
+(missing `20`, missing `40`) that show up as inconsistent rhythm.
+
+**That is a statement about the export, not about Paper.** Paper has no
+`calc()`-derived scale: a canvas node binds a concrete
+`var(--spacing-4)` or nothing. Enumerated spacing tokens are redundant in the
+generated CSS *and* load-bearing on the canvas at the same time.
+
+Measured in Radiant Thread Studio: **134 nodes** bound `var(--spacing-N)` for
+`gap`, `padding`, `marginTop` and `width`, including the specimens that
+illustrate the scale. (Historical count, recorded when the deletion was
+attempted; not remeasured on 2026-09-09.)
+
+So: before deleting an enumerated spacing token, run `find_nodes` against it.
+Zero Paper consumers → safe to drop from the export. Non-zero → it stays in
+Paper, and the redundancy is confined to the generated CSS, where the derived
+scale covers it anyway. Deduplicate by consumer, never by rule.
 
 ---
 

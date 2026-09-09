@@ -176,13 +176,23 @@ F-01 claimed unitless line-height matters. A round-trip that passes without
 nesting does not test that claim, so it was tested directly: identical markup and
 hierarchy, the only variable being the token's stored form.
 
+Parent font size: **16px**, declared explicitly as `text-[16px]`.
+
 | Parent `line-height` | Nested 40px child resolves to |
 |----------------------|-------------------------------|
-| `120%` — what Paper stores | **19.2px** |
-| `1.2` — what Tailwind ships | **48px** |
+| `120%` — what Paper stores | **19.2px** (16 × 1.2, inherited as px) |
+| `1.2` — what Tailwind ships | **48px** (40 × 1.2, recomputed) |
 
 A 2.5× error. At `120%` the 40px child gets a 19.2px line box and collides with
 the lines above and below it.
+
+> **Corrected 2026-09-09.** The fixture originally styled the parent with
+> `text-md`, a token it never defined, so the parent silently computed to the
+> 16px default while the page and `tests/README.md` both said 18px. The measured
+> 19.2px is 16 × 1.2, not 18 × 1.2 — the number was right, the label was wrong.
+> The fixture now declares 16px explicitly and `tests/browser.test.mjs` asserts
+> the parent size *before* asserting the children. The inheritance finding
+> itself was never in doubt.
 
 **F-01 is confirmed and not theoretical.** It is invisible in flat sections —
 which is most of a landing page, and why the round-trip above passed — and
@@ -260,12 +270,12 @@ But note what the redefinition does to the ramp. Default `lg` is 1024px; moved t
 has become a 432px jump. The scale works but is lopsided — an argument for
 clearing the namespace with `initial` rather than redefining a single rung.
 
-## T4 — `font-semibold` on a single-weight family · REFUTED
+## T4 — `font-semibold` on a single-weight family · CORRECTED 2026-09-09
 
 Predicted: Caprasimo ships only weight 400, so `font-semibold` on display type
 would produce faux-bold.
 
-**Wrong.** Measured widths of the same string at 50px:
+The original run measured widths of the same string at 50px:
 
 | Element | `font-weight` | Rendered width |
 |---------|---------------|----------------|
@@ -273,16 +283,29 @@ would produce faux-bold.
 | `font-display font-semibold` | 600 | **290.78px** |
 | `font-display font-semibold [font-synthesis:none]` | 600 | **290.78px** |
 
-Identical to the hundredth of a pixel, and visually indistinguishable. No
-synthetic bold is applied; the browser resolves to the 400 face and moves on.
+and concluded from the identical widths that no synthetic bold is applied —
+a **silent no-op**.
 
-That is worse than faux-bold, not better: `--font-weight-semibold` on
-`--font-display` is a **silent no-op**. The computed style still reports `600`, so
-inspecting the element confirms the author's intent while the page renders
-something else. Someone asking for emphasis gets nothing, and no warning.
+> **That conclusion was wrong, and the correction is the finding.** Equal advance
+> width is not equal rasterisation. Re-measured on 2026-09-09 (Chrome 152.0.7977.84,
+> Playwright 1.63.0): toggling *only* `font-synthesis: none` on the same
+> 600-weight element, with identical content and position, changed **2,514
+> pixels** in a 292 × 57px screenshot. Synthesis is being applied. The three
+> widths still match to the hundredth of a pixel — synthetic emboldening
+> thickens strokes without advancing the metrics.
+
+Two lessons, both larger than the original claim:
+
+- **Width is a metric, not a raster.** To decide whether a face is being
+  synthesised, compare the rendered pixels of the *same element* with synthesis
+  on and off. Any inference from advance width alone is unsupported.
+- Pixel counts are environment-bound. The 2,514 figure describes this browser
+  and this font build; the *direction* (non-zero difference) is the portable
+  claim. `tests/browser.test.mjs` asserts the difference is non-zero and records
+  the browser version rather than the historical count.
 
 Call `get_font_family_info` before tokenizing a weight — it lists exactly which
-faces a family ships.
+faces a family ships, which is the check that avoids the question entirely.
 
 ---
 
@@ -342,9 +365,25 @@ face nor a chosen fallback — it is the browser's own default. This is exactly 
 silent substitution Coverage §2 warns about, now measured.
 
 More useful: **`document.fonts.check()` cannot detect a missing family.** It
-returned `true` for a typeface that does not exist. There is no cheap runtime
-assertion that a font token resolved; comparing rendered widths against a known
-control is the only reliable check.
+returned `true` for a typeface that does not exist — [documented API behaviour](https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/check#nonexistent_fonts),
+not a browser bug. There is no cheap runtime assertion that a font token
+resolved.
+
+> **Corrected 2026-09-09.** The original wording called width comparison "the
+> only reliable check". It is not reliable either, in either direction:
+> different widths prove the two elements rendered differently, but *equal*
+> widths prove nothing about face identity — see T4, where three equal widths
+> hid a 2,514-pixel raster difference. Width comparison is a cheap smoke test.
+> What is actually load-bearing:
+>
+> - `document.fonts.ready`, then inspecting the loaded `FontFace` entries for
+>   the family and weight you asked for.
+> - `get_font_family_info` on the Paper side, before the token exists.
+> - Same-element raster comparison when the question is synthesis.
+>
+> Report the declared family, the loaded-face result, and the fallback
+> observation as three separate facts. Collapsing them into one "the font works"
+> claim is how the silent substitution survived this long.
 
 ## C4 — Letter spacing · em is relative, and `0em` is not `0px`
 
