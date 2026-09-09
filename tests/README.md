@@ -67,6 +67,7 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | C2.2 Partial failure | [W3](workflow-cases.md#w3--partial-batch-failure--c22) | not-run |
 | C3.1 Designed thresholds | [W8](workflow-cases.md#w8--breakpoint-policy--c31) | not-run |
 | C3.2 Consumer boundaries | browser · *viewport breakpoints … container queries*; *spacing: the derived scale* | automated |
+| C3 All ten namespaces render | browser · sweeps, leading matrix, boundaries, *font weight: the tokens resolve* | automated — 10 of 10 |
 | C4.1 Convertible values | browser · *leading unit matrix* | automated |
 | C4.2 Unknown intent | browser · *leading unit matrix* (dangling alias) + [W4](workflow-cases.md#w4--alias-cycle-and-unresolved-leading--c42) | partial · agent case not-run |
 | C5.1 Completed rename | browser · *rename: the naive protocol breaks* | automated |
@@ -89,7 +90,7 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | V2.2 Broken reference | contract · *missing reference*; *reference outside the package*; *symlink* | automated |
 | V3.1 Correct examples | browser · template, regeneration, rename, sweep, spacing, CTA | automated |
 | V3.2 Boundary and failure controls | browser · *viewport … container*; *F-01*; *leading unit matrix*; *rename* | automated |
-| V4.1 Synthesis comparison | browser · *font synthesis changes the raster* | automated |
+| V4.1 Synthesis comparison | browser · *font synthesis changes the raster*, with the *font weight* positive control | automated |
 | V4.2 Missing face | browser · *missing family* | automated |
 | V5.1 Coverage inventory | this table | automated by inspection |
 | V5.2 Agent workflow cases | [workflow-cases.md](workflow-cases.md) | not-run |
@@ -103,7 +104,10 @@ Some assertions depend on the browser and the font build. They are asserted by
 
 - The synthesis test asserts that toggling `font-synthesis` changes the raster
   of the same element, and reports the browser version. It does not assert the
-  2,514 changed pixels the audit measured.
+  2,514 changed pixels the audit measured. Its positive control is the element
+  backed by a real Syne 600 face, which must render *identically* with synthesis
+  off — that is what makes the Caprasimo difference attributable to synthesis
+  rather than to the toggle.
 - The CTA test asserts a height band, not `501.1875px`.
 - Font widths are compared against a control in the same page, never to a
   recorded pixel count.

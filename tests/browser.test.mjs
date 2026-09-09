@@ -368,6 +368,41 @@ test('round-trip CTA renders the exported geometry', async () => {
 
 // ── V4 — font evidence ───────────────────────────────────────────────────────
 
+test('font weight: the tokens resolve, and a real face is not a synthesised one', async () => {
+  await withBrowser({ viewport: 1000 }, async ({ page, open }) => {
+    await open('/unverified-claims.html');
+
+    // The --font-weight-* namespace had no assertion at all until now, which is
+    // how the T4 saga stayed unnoticed: the synthesis test never confirmed that
+    // `font-semibold` had resolved to 600 in the first place.
+    assert.equal(await computed(page, '#t4-reg', 'font-weight'), '400');
+    assert.equal(await computed(page, '#t4-semi', 'font-weight'), '600');
+    assert.equal(await computed(page, '#t4-body-semi', 'font-weight'), '600');
+
+    // The trap in one line: the computed style reports the author's intent even
+    // when synthesis is switched off and nothing can honour it.
+    assert.equal(await computed(page, '#t4-semi-nosyn', 'font-weight'), '600');
+
+    // Caprasimo ships one face, Syne ships 400 and 600. Both elements above
+    // report 600; only one of them has a face to render it.
+    const faces = await page.evaluate(() =>
+      [...document.fonts].map(f => `${f.family.replaceAll('"', '')}@${f.weight}`));
+    assert.ok(faces.includes('Syne@600'), 'the pinned Syne 600 face must be loaded');
+    assert.ok(!faces.includes('Caprasimo@600'), 'Caprasimo must ship no 600 face');
+
+    // Positive control the synthesis test lacks. Toggling synthesis on the
+    // element backed by a real 600 face changes nothing, because there is
+    // nothing to synthesise — which is what makes the Caprasimo difference
+    // attributable to synthesis rather than to the toggle itself.
+    const real = await page.$('#t4-body-semi');
+    await real.evaluate(el => { el.style.fontSynthesis = 'weight'; });
+    const realOn = await real.screenshot();
+    await real.evaluate(el => { el.style.fontSynthesis = 'none'; });
+    const realOff = await real.screenshot();
+    assert.ok(realOn.equals(realOff), 'a real 600 face must render identically with synthesis off');
+  });
+});
+
 test('font synthesis changes the raster of the same element, though widths match', async () => {
   await withBrowser({ viewport: 1000 }, async ({ page, open, browserVersion }) => {
     await open('/token-sweep.html');
