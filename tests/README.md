@@ -89,6 +89,7 @@ to a check here. `not-run` is a legitimate value; an unmapped requirement is not
 | V2.1 Reference isolation | contract · *isolated skill resolves all runtime references* | automated |
 | V2.2 Broken reference | contract · *missing reference*; *reference outside the package*; *symlink* | automated |
 | V3.1 Correct examples | browser · template, regeneration, rename, sweep, spacing, CTA | automated |
+| V3.1 Full sweep probes | browser · every `token-sweep.html` probe, alpha modifier and `rounded-full` included | automated |
 | V3.2 Boundary and failure controls | browser · *viewport … container*; *F-01*; *leading unit matrix*; *rename* | automated |
 | V4.1 Synthesis comparison | browser · *font synthesis changes the raster*, with the *font weight* positive control | automated |
 | V4.2 Missing face | browser · *missing family* | automated |
@@ -114,6 +115,33 @@ Some assertions depend on the browser and the font build. They are asserted by
 
 Anything asserted exactly — computed `font-size`, `line-height`, `padding`,
 `border-radius`, colors — is arithmetic the browser must reproduce anywhere.
+
+## Where the fixture data comes from
+
+A probe asserting invented values proves the browser works, not that the skill
+does. Three of the four pages use **real Radiant Thread Studio tokens**, and that
+was re-verified against live Paper on 2026-09-09:
+
+| Page | Provenance | Drift vs live Paper |
+|------|------------|---------------------|
+| `roundtrip-final-cta.html` | `get_jsx({format:"tailwind"})` + `get_tokens`, pasted verbatim | — export, not re-checked per token |
+| `token-sweep.html` | 28 Radiant Thread tokens | **0** |
+| `unverified-claims.html` | 18 Radiant Thread tokens | **0** |
+| `f01-leading-inheritance.html` | **synthetic, necessarily** | n/a |
+
+The only non-Paper token in the sweep is `--font-missing: NotARealTypeface`, a
+deliberate control for silent substitution.
+
+F-01 is synthetic because it *cannot* be otherwise: it contrasts `120%` against
+the unitless `1.2`, and Paper cannot store a unitless line-height — writing `1.2`
+reads back `120%` (F-01 is that finding). The fixture must hand-write the value
+Paper refuses to hold. The in-memory fixtures inside `browser.test.mjs` are
+synthetic for the same class of reason: they stage broken states (a dangling
+alias, a missing resource) that no real design file should contain.
+
+Re-run the drift check by exporting the Radiant Thread tokens and diffing them
+against each fixture's `@theme` block. A fixture that has drifted is still a
+valid CSS test, but it stops being evidence about this design system.
 
 ## The visual probes
 

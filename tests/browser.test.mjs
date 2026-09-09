@@ -335,6 +335,26 @@ test('token sweep: every declared color and font size renders its declared value
     assert.equal(await computed(page, '#c4-n-100', 'letter-spacing'), 'normal');
     assert.equal(await computed(page, '#c4-w-10', 'letter-spacing'), '2.13px');
     assert.equal(await computed(page, '#c4-w-100', 'letter-spacing'), '21.3px');
+
+    // The second tracking token, so the em-is-relative rule is shown on more
+    // than one value: 0.1em is 1px at 10px and 10px at 100px.
+    assert.equal(await computed(page, '#c4-d-10', 'letter-spacing'), '1px');
+    assert.equal(await computed(page, '#c4-d-100', 'letter-spacing'), '10px');
+
+    // An opacity modifier changes the colour space, not just the alpha.
+    // `bg-rust` serialises as rgb(); `bg-rust/50` comes back as oklab, because
+    // v4 interpolates there. Code comparing against rgba() never matches.
+    const solid = await computed(page, '[data-t="rust"]', 'background-color');
+    const alpha = await computed(page, '#c1-alpha', 'background-color');
+    assert.match(solid, /^rgb\(/, 'the solid token serialises as rgb()');
+    assert.match(alpha, /^oklab\(/, 'the /50 modifier switches to oklab');
+    assert.match(alpha, /\/ 0\.5\)$/, 'the requested alpha survives the conversion');
+
+    // `rounded-full` is calc(infinity * 1px), which this engine resolves to
+    // 2^25 px. Asserted as a magnitude: the exact figure is an engine detail,
+    // but any parser expecting a sane radius has to cope with it.
+    const full = Number.parseFloat(await computed(page, '#c5-full', 'border-radius'));
+    assert.ok(full > 1e6, `rounded-full must resolve to an effectively infinite radius, got ${full}`);
   });
 });
 
@@ -454,6 +474,26 @@ test('missing family: the declaration survives, fonts.check lies, loaded faces d
     const controlWidth = await textWidth(page, '#c3-control');
     assert.notEqual(missingWidth, controlWidth,
       'the browser default is not the system-ui control either');
+
+    // All three declared families, not just the display one. Each must resolve
+    // to its own face: four distinct widths for the same string means nothing
+    // collapsed to a shared fallback. This is the cheap smoke test — it catches
+    // a font that stopped loading, and it proves nothing about face identity.
+    assert.equal(await computed(page, '#c3-body', 'font-family'), 'Syne');
+    assert.match(await computed(page, '#c3-accent', 'font-family'), /Meow Script/);
+
+    const widths = [
+      await textWidth(page, '#c3-display'),
+      await textWidth(page, '#c3-body'),
+      await textWidth(page, '#c3-accent'),
+      controlWidth,
+    ];
+    assert.equal(new Set(widths).size, widths.length,
+      `all four renderings must differ, got ${widths.join(', ')}`);
+
+    for (const family of ['Syne', 'Meow Script']) {
+      assert.ok(loaded.includes(family), `${family} must be in the loaded face set`);
+    }
   });
 });
 
